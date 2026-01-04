@@ -21,20 +21,23 @@ class Parser:
         self.results_table = self.tables[4]
         # Get table rows
         self.table_rows = self.content_table.find_all('tr')
-        self.image_elements = []
+        self.image_elements = list()
         self.counter = 0
-        self.get_page_urls()
-        self.parse_images()
 
+    ''' Parse images from table rows and add them to image_elements list '''
     def parse_images(self):
         for row in self.table_rows:
             if row.find('td').find('img'):
-                self.image_elements.append(row.find('td').find('img'))
+                # get all images from row
+                images = row.find('td').find_all('img')
+                for image in images:
+                    image_src = image['src']
+                    image_alt = image['alt']
+                    self.image_elements.append({
+                        'src': image_src,
+                        'alt': image_alt
+                    })
 
-    def get_page_urls(self):
-        print(self.results_table)
-        total_results = self.results_table.find('tr').find('td').find_all('b')[1].text
-        # Calculate total pages rounded up
-        total_pages = math.ceil(int(total_results) / 25)
-        print(f"Total results: {total_results}")
-        print(f"Total pages: {total_pages}")
+
+    def get_image_elements(self):
+        return self.image_elements
